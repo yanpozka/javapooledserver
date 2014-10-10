@@ -32,7 +32,7 @@ public class Worker implements Runnable {
 
 		try {
 			OutputStream output = socket.getOutputStream();
-			byte[] message = this.getMessage(id);
+			byte[] message = this.getMessage();
 
 			output.write(message);
 
@@ -52,7 +52,7 @@ public class Worker implements Runnable {
 		}
 	}
 
-	private byte[] getMessage(int id) throws IOException {
+	private byte[] getMessage() throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
 		String response = String.format("Thread-%d", id);
@@ -65,5 +65,4 @@ public class Worker implements Runnable {
 
 		return outputStream.toByteArray();
 	}
-
 }

@@ -1,8 +1,7 @@
 package net.yandry.utils;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 
 /**
  * Class with util methods
@@ -22,32 +21,19 @@ public class Util {
 
 	/**
 	 * @param integer
-	 *            seconds
-	 * @return The byte representation of the message to transmit
-	 * @throws IOException
-	 */
-	public static byte[] getMessageBytes(int s, short messageId)
-			throws IOException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-
-		String response = String.format("\"The server waited for %d seconds\"",
-				s);
-		// always will be two bytes for the message id
-		outputStream.write(getBytes(2 + response.length()));
-
-		outputStream.write(getBytes(messageId));
-
-		outputStream.write(response.getBytes());
-
-		return outputStream.toByteArray();
-	}
-
-	/**
-	 * @param integer
-	 *            value
+	 * 
 	 * @return The byte representation of the integer
 	 */
 	public static byte[] getBytes(int val) {
-		return ByteBuffer.allocate(4).putInt(val).array();
+		return ByteBuffer.allocate(4).order(ByteOrder.BIG_ENDIAN).putInt(val).array();
+	}
+	
+	/**
+	 * @param integer
+	 * 
+	 * @return The byte representation of the integer
+	 */
+	public static byte[] getBytes(short val) {
+		return ByteBuffer.allocate(2).order(ByteOrder.BIG_ENDIAN).putShort(val).array();
 	}
 }

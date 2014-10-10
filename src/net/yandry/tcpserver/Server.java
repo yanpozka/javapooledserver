@@ -13,7 +13,7 @@ import net.yandry.utils.Util;
  * 
  * @author yandry pozo
  */
-public class Server {
+public class Server implements Runnable {
 
 	private int port;
 	private ServerSocket serverSocket;
@@ -26,7 +26,8 @@ public class Server {
 		this.isStopped = false;
 	}
 
-	public void startComunication() {
+	@Override
+	public void run() {
 		try {
 			serverSocket = new ServerSocket(port);
 		} catch (IOException e) {
@@ -40,21 +41,23 @@ public class Server {
 			try {
 				clientSocket = this.serverSocket.accept();
 			} catch (IOException e) {
-				if (isStopped()) {
-					this.threadPool.shutdown();
-					return;
-				}
-				Util.error("[-Server-] Error accepting client connection", e);
+				Util.error("[-Server-] Error accepting client connection\n", e);
 			}
-			this.threadPool.execute(new HandleRunnable(clientSocket));
-			
-			System.out.format("[+Server+] A new client is processed\n", port);
+			this.threadPool.execute(new Worker(clientSocket));
 		}
+		this.threadPool.shutdown();
+		System.out.format("[+Server+] Closed\n", port);
 	}
 
 	public synchronized void stop() {
 		this.isStopped = true;
-
+		if (this.serverSocket != null) {
+			try {
+				this.serverSocket.close();
+			} catch (IOException e) {
+				Util.error("[-Server-] Error trying to close server\n", e);
+			}
+		}
 	}
 
 	private synchronized boolean isStopped() {

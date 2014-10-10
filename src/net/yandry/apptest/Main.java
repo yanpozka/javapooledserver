@@ -1,25 +1,24 @@
 package net.yandry.apptest;
 
+import net.yandry.tcpclient.Client;
 import net.yandry.tcpserver.Server;
 import net.yandry.utils.Util;
 
+/**
+ * Start the server and the client
+ * 
+ * @author yandry pozo
+ */
 public class Main {
 
 	public static void main(String[] args) throws InterruptedException {
 		Util.DEBUG = true;
-		Server server = new Server(21005);
+		int port = 1989;
 		
-		new Thread(new Runnable() {
+		Server server = new Server(port);
 
-			@Override
-			public void run() {
-				server.startComunication();
-			}
-		}).start();
-		
-		
-		Thread.sleep(10000);
-		
-		server.stop();
+		new Thread(server).start();
+
+		new Client(port);
 	}
 }
